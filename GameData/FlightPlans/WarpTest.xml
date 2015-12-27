@@ -1,0 +1,13 @@
+<FlightPlan>
+    <StartConditions>
+        <EngineType>liquidfuel</EngineType>
+        <DeltaV>1000</DeltaV>
+        <Encounter>Minmus</Encounter>
+    </StartConditions>
+    <Maneuvers>
+        <CourseCorrection target="Minmus" distance="15"/>
+        <WarpTo>Transition</WarpTo>
+        <PeriapsisNow>16</PeriapsisNow>
+        <Circularize>PE</Circularize>
+    </Maneuvers>
+</FlightPlan>

@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DAC62093-E763-4B28-B5BA-9B94416526F9}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{D735C89A-090B-4C9A-9B99-D096226405A4}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KerbalRogueAI</RootNamespace>
-    <AssemblyName>KerbalRogueAI</AssemblyName>
+    <RootNamespace>XMLValidationTest</RootNamespace>
+    <AssemblyName>XMLValidationTest</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -29,53 +31,39 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Conditions\AICondition.cs" />
-    <Compile Include="AICore.cs" />
-    <Compile Include="Conditions\ConditionAnd.cs" />
-    <Compile Include="Conditions\ConditionBody.cs" />
-    <Compile Include="Conditions\ConditionDeltaV.cs" />
-    <Compile Include="Conditions\ConditionEncounter.cs" />
-    <Compile Include="Conditions\ConditionEngine.cs" />
-    <Compile Include="Conditions\ConditionLanded.cs" />
-    <Compile Include="Conditions\ConditionMass.cs" />
-    <Compile Include="Conditions\ConditionModuleType.cs" />
-    <Compile Include="Conditions\ConditionOr.cs" />
-    <Compile Include="Conditions\ConditionOrbit.cs" />
-    <Compile Include="Conditions\ConditionRandom.cs" />
-    <Compile Include="Operations\AINodeOperation.cs" />
-    <Compile Include="Operations\AIOperation.cs" />
-    <Compile Include="Operations\AIOperationCircularize.cs" />
-    <Compile Include="Operations\AIOperationCourseAdjust.cs" />
-    <Compile Include="Operations\AIOperationDock.cs" />
-    <Compile Include="Operations\AIOperationHohmann.cs" />
-    <Compile Include="Operations\AIOperationPE.cs" />
-    <Compile Include="Operations\AIOperationRendezvous.cs" />
-    <Compile Include="Operations\AIOperationSpaceplaneTakeoff.cs" />
-    <Compile Include="Operations\AIOperationWarp.cs" />
-    <Compile Include="AIXmlParser.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="MechJeb2">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\MechJeb2\Plugins\MechJeb2.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.XML" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KerbalRogueAI\KerbalRogueAI.csproj">
+      <Project>{dac62093-e763-4b28-b5ba-9b94416526f9}</Project>
+      <Name>KerbalRogueAI</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalRogueAI\Plugins\"</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

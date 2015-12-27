@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified">
+    <xsd:complexType name="RecurseCondition">
+        <xsd:choice maxOccurs="unbounded">
+            <xsd:element name="LandedAt" />
+            <xsd:element name="EngineType" />
+            <xsd:element name="DeltaV" />
+            <xsd:element name="Encounter" />
+            <xsd:element name="BodyExists" />
+            <xsd:element name="OrbitCircular" />
+            <xsd:element name="MassGreater" />
+            <xsd:element name="MassLess" />
+            <xsd:element name="ModuleType" />
+            <xsd:element name="or" type="RecurseCondition"/>
+            <xsd:element name="and" type="RecurseCondition"/>
+        </xsd:choice>
+    </xsd:complexType>
+
+  <xsd:element name="FlightPlan">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="StartConditions" type="RecurseCondition"/>
+        <xsd:element name="Maneuvers">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="SpaceplaneTakeoff" />
+                    <xsd:element name="HohmannTransfer" />
+                    <xsd:element name="CourseCorrection" >
+                        <xsd:complexType>
+                            <xsd:attribute name="target" type="xsd:string" use="required"/>
+                            <xsd:attribute name="distance" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="WarpTo" />
+                    <xsd:element name="PeriapsisNow" />
+                    <xsd:element name="Circularize" />
+                    <xsd:element name="Rendezvous" />
+                    <xsd:element name="Dock" >
+                        <xsd:complexType>
+                            <xsd:attribute name="FromGrabber" type="xsd:boolean" use="optional"/>
+                            <xsd:attribute name="FromDockingPort" type="xsd:boolean" use="optional"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

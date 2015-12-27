@@ -1,0 +1,20 @@
+<FlightPlan>
+    <StartConditions>
+        <and>
+            <LandedAt>Runway</LandedAt>
+            <EngineType>turbine</EngineType>
+            <DeltaV>13000</DeltaV>
+            <MassGreater>126.1</MassGreater>
+            <ModuleType>ModuleLiftingSurface</ModuleType>
+        </and>
+    </StartConditions>
+    <Maneuvers>
+        <SpaceplaneTakeoff></SpaceplaneTakeoff>
+        <Circularize>AP</Circularize>
+        <HohmannTransfer>Minmus</HohmannTransfer>
+        <CourseCorrection target="Minmus" distance="15"/>
+        <WarpTo>Transition</WarpTo>
+        <PeriapsisNow>16</PeriapsisNow>
+        <Circularize>PE</Circularize>
+    </Maneuvers>
+</FlightPlan>
