@@ -5,10 +5,11 @@
             <EngineType>liquidfuel</EngineType>
             <DeltaV>500</DeltaV>
             <ModuleType>ModuleGrappleNode</ModuleType>
+            <VesselTarget />
         </and>
     </StartConditions>
     <Maneuvers>
-        <Rendezvous>10</Rendezvous>
+        <Rendezvous>50</Rendezvous>
         <Dock FromGrabber="true"/>
     </Maneuvers>
 </FlightPlan>

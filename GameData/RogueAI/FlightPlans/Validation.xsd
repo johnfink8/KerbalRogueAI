@@ -11,6 +11,7 @@
             <xsd:element name="MassGreater" />
             <xsd:element name="MassLess" />
             <xsd:element name="ModuleType" />
+            <xsd:element name="VesselTarget" />
             <xsd:element name="or" type="RecurseCondition"/>
             <xsd:element name="and" type="RecurseCondition"/>
         </xsd:choice>
@@ -33,14 +34,17 @@
                     </xsd:element>
                     <xsd:element name="WarpTo" />
                     <xsd:element name="PeriapsisNow" />
+                    <xsd:element name="ChangeAP" />
                     <xsd:element name="Circularize" />
                     <xsd:element name="Rendezvous" />
+                    <xsd:element name="Undock" />
                     <xsd:element name="Dock" >
                         <xsd:complexType>
                             <xsd:attribute name="FromGrabber" type="xsd:boolean" use="optional"/>
                             <xsd:attribute name="FromDockingPort" type="xsd:boolean" use="optional"/>
                         </xsd:complexType>
                     </xsd:element>
+                    <xsd:element name="PlanetTransfer" />
                 </xsd:choice>
             </xsd:complexType>
         </xsd:element>

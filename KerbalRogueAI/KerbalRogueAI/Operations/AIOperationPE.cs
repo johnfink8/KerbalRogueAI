@@ -15,7 +15,7 @@ namespace KerbalRogueAI
         public override void GenerateNode()
         {
             double UT = Planetarium.GetUniversalTime();
-            var computedNode = new ManeuverParameters(OrbitalManeuverCalculator.DeltaVToChangePeriapsis(vessel.orbit, UT, 16000 + vessel.mainBody.Radius), UT);
+            var computedNode = new ManeuverParameters(OrbitalManeuverCalculator.DeltaVToChangePeriapsis(vessel.orbit, UT, distance + vessel.mainBody.Radius), UT);
             orbit = vessel.orbit;
             dV = computedNode.dV;
             this.UT = computedNode.UT;

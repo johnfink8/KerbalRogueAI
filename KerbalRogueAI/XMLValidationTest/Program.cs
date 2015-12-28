@@ -17,7 +17,7 @@ namespace XMLValidationTest
             AIXmlParser parser = new AIXmlParser(aicore);
             XmlNode node=null;
             Directory.SetCurrentDirectory("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Kerbal Space Program");
-            foreach (string filename in Directory.GetFiles("GameData\\KerbalRogueAI\\FlightPlans"))
+            foreach (string filename in Directory.GetFiles("GameData\\RogueAI\\FlightPlans"))
             {
                 if (filename.ToLower().EndsWith(".xml"))
                 {

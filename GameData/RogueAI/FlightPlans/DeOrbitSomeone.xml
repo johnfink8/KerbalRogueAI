@@ -1,0 +1,18 @@
+<FlightPlan>
+    <StartConditions>
+        <and>
+            <OrbitCircular/>
+            <EngineType>liquidfuel</EngineType>
+            <DeltaV>500</DeltaV>
+            <ModuleType>ModuleGrappleNode</ModuleType>
+            <VesselTarget />
+        </and>
+    </StartConditions>
+    <Maneuvers>
+        <Rendezvous>50</Rendezvous>
+        <Dock FromGrabber="true"/>
+        <PeriapsisNow>0</PeriapsisNow>
+        <Undock />
+        <Circularize>Now</Circularize>
+    </Maneuvers>
+</FlightPlan>

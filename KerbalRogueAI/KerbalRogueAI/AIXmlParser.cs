@@ -80,6 +80,8 @@ namespace KerbalRogueAI
 
                 case "orbitcircular":
                     var conditioncircular = new ConditionOrbit(aicore);
+                    if (xmlcondition.InnerText != "")
+                        conditioncircular.Body = xmlcondition.InnerText;
                     return conditioncircular;
 
                 case "massgreater":
@@ -99,6 +101,9 @@ namespace KerbalRogueAI
                     if (xmlcondition.InnerText != "")
                         conditionmoduletype.ModuleType = xmlcondition.InnerText;
                     return conditionmoduletype;
+                case "vesseltarget":
+                    var conditionvesseltarget = new ConditionVesselTarget(aicore);
+                    return conditionvesseltarget;
                 case "or":
                     var conditionor = new ConditionOr(aicore);
                     foreach (XmlNode child in xmlcondition.ChildNodes)
@@ -125,52 +130,67 @@ namespace KerbalRogueAI
             switch (xmlmaneuver.Name.ToLower())
             {
                 case "spaceplanetakeoff":
-                    AIOperationSpaceplaneTakeoff opspaceplane = new AIOperationSpaceplaneTakeoff(aicore);
+                    var opspaceplane = new AIOperationSpaceplaneTakeoff(aicore);
                     return opspaceplane;
 
                 case "circularize":
-                    AIOperationCircularize opcircularize = new AIOperationCircularize(aicore);
+                    var opcircularize = new AIOperationCircularize(aicore);
                     if (xmlmaneuver.InnerText != "")
                         opcircularize.destination = xmlmaneuver.InnerText;
                     return opcircularize;
 
                 case "hohmanntransfer":
-                    AIOperationHohmann optransfer = new AIOperationHohmann(aicore);
+                    var optransfer = new AIOperationHohmann(aicore);
                     if (xmlmaneuver.InnerText != "")
                         optransfer.body = xmlmaneuver.InnerText;
                     return optransfer;
 
                 case "coursecorrection":
-                    AIOperationCourseAdjust opadjust = new AIOperationCourseAdjust(aicore);
+                    var opadjust = new AIOperationCourseAdjust(aicore);
                     opadjust.distance = Double.Parse(xmlmaneuver.Attributes.GetNamedItem("distance").InnerText);
                     opadjust.body = xmlmaneuver.Attributes.GetNamedItem("target").InnerText;
                     return opadjust;
 
                 case "warpto":
-                    AIOperationWarp opwarp = new AIOperationWarp(aicore);
+                    var opwarp = new AIOperationWarp(aicore);
                     if (xmlmaneuver.InnerText != "")
                         opwarp.strTo = xmlmaneuver.InnerText;
                     return opwarp;
 
                 case "periapsisnow":
-                    AIOperationPE oppe = new AIOperationPE(aicore);
+                    var oppe = new AIOperationPE(aicore);
                     if (xmlmaneuver.InnerText != "")
                         oppe.distance = Double.Parse(xmlmaneuver.InnerText);
                     return oppe;
 
+                case "changeap":
+                    var opap = new AIOperationAP(aicore);
+                    if (xmlmaneuver.InnerText != "")
+                        opap.distance = Double.Parse(xmlmaneuver.InnerText);
+                    return opap;
+
                 case "rendezvous":
-                    AIOperationRendezvous opren = new AIOperationRendezvous(aicore);
+                    var opren = new AIOperationRendezvous(aicore);
                     if (xmlmaneuver.InnerText != "")
                         opren.distance = Double.Parse(xmlmaneuver.InnerText);
                     return opren;
 
                 case "dock":
-                    AIOperationDock opdock = new AIOperationDock(aicore);
+                    var opdock = new AIOperationDock(aicore);
                     if (xmlmaneuver.Attributes.GetNamedItem("FromGrabber") != null)
                         opdock.FromGrabber = true;
                     else if (xmlmaneuver.Attributes.GetNamedItem("FromDockingPort") != null)
                         opdock.FromDockingPort = true;
                     return opdock;
+
+                case "undock":
+                    var opundock = new AIOperationUndock(aicore);
+                    return opundock;
+
+                case "planettransfer":
+                    string target = xmlmaneuver.InnerText;
+                    var planettransfer = new AIOperationPlanetTransfer(aicore, target);
+                    return planettransfer;
 
                 default:
                     return null;
@@ -231,7 +251,7 @@ namespace KerbalRogueAI
         {
             XmlSchemaSet xs = new XmlSchemaSet();
             XmlSchema schema;
-            XmlReader schemareader = XmlReader.Create("GameData\\KerbalRogueAI\\FlightPlans\\Validation.xsd");  // not stream from the variable
+            XmlReader schemareader = XmlReader.Create("GameData\\RogueAI\\FlightPlans\\Validation.xsd");
             schema = xs.Add(null, schemareader);
             return schema;
         }

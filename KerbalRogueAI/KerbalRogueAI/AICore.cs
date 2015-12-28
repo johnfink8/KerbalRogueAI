@@ -65,6 +65,12 @@ namespace KerbalRogueAI
         public string FlightPlanFilename = null;
         private double RandomTimer = 0;
         private double RandomDuration = 60;
+        public bool GlobalEnabled = false;
+        protected Rect windowPos;
+        Texture2D logo = null;
+        public string OutputMessage = "AI Initiated";
+        public string ManeuverStatus = "";
+
 
         //Part PartPlugin = new Part();
 
@@ -84,17 +90,16 @@ namespace KerbalRogueAI
 
         private void CreateButtonIcon()
         {
-            if (button==null)
-                button = ApplicationLauncher.Instance.AddModApplication(
-                    null,//() => BuildAdvanced.Instance.Visible = true,
-                    null,//() => BuildAdvanced.Instance.Visible = false,
-                    null,
-                    null,
-                    null,
-                    null,
-                    ApplicationLauncher.AppScenes.ALWAYS,
-                    GameDatabase.Instance.GetTexture("KerbalRogueAI/Textures/icon", false)
-                    );
+            button = ApplicationLauncher.Instance.AddModApplication(
+                null,//() => BuildAdvanced.Instance.Visible = true,
+                null,//() => BuildAdvanced.Instance.Visible = false,
+                null,
+                null,
+                null,
+                null,
+                ApplicationLauncher.AppScenes.FLIGHT,
+                GameDatabase.Instance.GetTexture("RogueAI/Textures/icon", false)
+                );
         }
 
         void CheckVessel()
@@ -108,7 +113,6 @@ namespace KerbalRogueAI
 
         }
 
-        public bool GlobalEnabled = false;
 
 
         void Start()  //Called when vessel is placed on the launchpad
@@ -119,7 +123,7 @@ namespace KerbalRogueAI
                 windowPos = new Rect(Screen.width/2 - 250, Screen.height / 2-150, 10, 10);
             }
             RenderingManager.AddToPostDrawQueue(3, new Callback(drawGUI));//start the GUI
-            core.part.stackIcon.SetIcon(core.part, "GameData\\KerbalRogueAI\\icons.png", 0, 0);
+            core.part.stackIcon.SetIcon(core.part, "GameData\\RogueAI\\icons.png", 0, 0);
 
         }
 
@@ -216,7 +220,7 @@ namespace KerbalRogueAI
         private List<AIOperation> GetFlightPlan()
         {
             AIXmlParser parser = new AIXmlParser(this);
-            foreach (string filename in Directory.GetFiles("GameData\\KerbalRogueAI\\FlightPlans"))
+            foreach (string filename in Directory.GetFiles("GameData\\RogueAI\\FlightPlans"))
             {
                 if (filename.ToLower().EndsWith(".xml"))
                 {
@@ -259,18 +263,39 @@ namespace KerbalRogueAI
             return result;
         }
 
-        bool VesselFilter(Vessel v)
+        public bool VesselFilter(Vessel v)
         {
             return v != null && v.vesselType == VesselType.Ship;
         }
 
-        public void GetRandomShipTarget()
+        public bool VesselFilterPlaneDeltaV(Vessel v)
+        {
+            if (v == null || v.vesselType != VesselType.Ship)
+                return false;
+            double UT = Planetarium.GetUniversalTime();
+            Vector3d dV = OrbitalManeuverCalculator.DeltaVAndTimeToMatchPlanesAscending(vessel.orbit, v.orbit, UT, out UT);
+            return dV.magnitude<0.5*VesselDeltaV();
+        }
+
+        public ITargetable FlightPlanTarget = null;
+
+        public void GetRandomShipTarget( Func<Vessel,bool> filterfunction)
         {
             Vessel newtarget=null;
-            newtarget = RandomChoice(FlightGlobals.fetch.vessels,VesselFilter);
+            newtarget = RandomChoice(FlightGlobals.fetch.vessels, filterfunction);
             FlightGlobals.fetch.SetVesselTarget(newtarget);
         }
 
+
+        public bool CheckManeuverNodes()
+        {
+            foreach (ManeuverNode node in vessel.patchedConicSolver.maneuverNodes)
+            {
+                if (node.DeltaV.magnitude > VesselDeltaV())
+                    return false;
+            }
+            return true;
+        }
 
         private void flyByWire(FlightCtrlState s)
         {
@@ -293,19 +318,20 @@ namespace KerbalRogueAI
                 {
                     if (FlightPlan[FlightPlanStep].Execute())
                     {
-                        Debug.Log("FlightPlan " + FlightPlanFilename + " step " + FlightPlanStep);
+                        Debug.Log("FlightPlan " + FlightPlanFilename + " step " + FlightPlanStep+" completed");
                         FlightPlanStep += 1;
                         if (FlightPlanStep >= FlightPlan.Count)
                         {
                             FlightPlanStep = 0;
                             FlightPlan = null;
                             FlightPlanFilename = null;
+                            FlightPlanTarget = null;
                         }
                     }
                 }
-                catch (AbortFlightPlanException)
+                catch (AbortFlightPlanException ex)
                 {
-                    Debug.LogError("Flight plan aborted.");
+                    Debug.LogError("Flight plan aborted.  " + ex.Message);
                     FlightPlanStep = 0;
                     FlightPlan = null;
                     FlightPlanFilename = null;
@@ -362,21 +388,15 @@ namespace KerbalRogueAI
          */
         void OnDestroy()
         {
+            ApplicationLauncher.Instance.RemoveModApplication(button);
         }
 
-        protected Rect windowPos;
-
-        Texture2D logo = null;
-
-        public string OutputMessage = "AI Initiated";
 
         private void WindowGUI(int windowID)
         {
             if (logo == null)
             {
-                //logo = new Texture2D(520, 150);
-                //logo.LoadImage(System.IO.File.ReadAllBytes("GameData\\KerbalRogueAI\\krai_logo.png"));
-                logo = GameDatabase.Instance.GetTexture("KerbalRogueAI/Textures/krai_logo", false);
+                logo = GameDatabase.Instance.GetTexture("RogueAI/Textures/krai_logo", false);
             }
             GUIStyle mySty = new GUIStyle(GUI.skin.button);
             mySty.normal.textColor = mySty.focused.textColor = Color.white;
@@ -388,6 +408,7 @@ namespace KerbalRogueAI
             GUILayout.Box(logo);
 
             GUILayout.Box(OutputMessage);
+            GUILayout.Box(ManeuverStatus);
             GUILayout.EndVertical();
 
             //DragWindow makes the window draggable. The Rect specifies which part of the window it can by dragged by, and is 

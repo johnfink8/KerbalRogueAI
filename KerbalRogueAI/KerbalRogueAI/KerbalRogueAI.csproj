@@ -43,15 +43,19 @@
     <Compile Include="Conditions\ConditionOr.cs" />
     <Compile Include="Conditions\ConditionOrbit.cs" />
     <Compile Include="Conditions\ConditionRandom.cs" />
+    <Compile Include="Conditions\ConditionVesselTarget.cs" />
     <Compile Include="Operations\AINodeOperation.cs" />
     <Compile Include="Operations\AIOperation.cs" />
+    <Compile Include="Operations\AIOperationAP.cs" />
     <Compile Include="Operations\AIOperationCircularize.cs" />
     <Compile Include="Operations\AIOperationCourseAdjust.cs" />
     <Compile Include="Operations\AIOperationDock.cs" />
     <Compile Include="Operations\AIOperationHohmann.cs" />
     <Compile Include="Operations\AIOperationPE.cs" />
+    <Compile Include="Operations\AIOperationPlanetTransfer.cs" />
     <Compile Include="Operations\AIOperationRendezvous.cs" />
     <Compile Include="Operations\AIOperationSpaceplaneTakeoff.cs" />
+    <Compile Include="Operations\AIOperationUndock.cs" />
     <Compile Include="Operations\AIOperationWarp.cs" />
     <Compile Include="AIXmlParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -74,7 +78,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalRogueAI\Plugins\"</PostBuildEvent>
+    <PostBuildEvent>copy /Y "$(TargetPath)" "$(SolutionDir)\..\GameData\RogueAI\Plugins\"
+
+robocopy /E  /NJH /NJS /np "$(SolutionDir)\..\GameData\RogueAI" "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\RogueAI"
+if errorlevel 2 then exit 1
+exit 0
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

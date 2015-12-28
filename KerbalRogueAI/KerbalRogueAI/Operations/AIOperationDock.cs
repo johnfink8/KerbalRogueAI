@@ -65,8 +65,12 @@ namespace KerbalRogueAI
                     var node = module as ModuleGrappleNode;
                     if (node != null)
                     {
-                        node.enabled = true;
-                        vessel.SetReferenceTransform(part);
+                        var animation = module.part.FindModuleImplementing<ModuleAnimateGeneric>();
+
+                        //if (node.state == "Locked")
+                            animation.Events["Toggle"].Invoke();
+                        node.MakeReferenceTransform();
+                        //vessel.SetReferenceTransform(part);
                         return true;
                     }
                 }
@@ -79,33 +83,43 @@ namespace KerbalRogueAI
         {
             if (core == null)
                 return false;
+            if (aicore.FlightPlanTarget != null && aicore.FlightPlanTarget != vessel.targetObject)
+                FlightGlobals.fetch.SetVesselTarget(aicore.FlightPlanTarget);
             if (core.target.Distance > 100)
                 throw new AbortFlightPlanException("Target too far");
-            if (FromDockingPort)
-            {
-                if (!GetTargetDockingPort())
-                    throw new AbortFlightPlanException("Target does not have docking port");
-                if (!SetDockControl())
-                    throw new AbortFlightPlanException("Vessel does not have docking port");
-            }
-            else if (FromGrabber)
-            {
-                if (!SetGrabControl())
-                    throw new AbortFlightPlanException("Vessel does not have grabber");
-            }
             var autopilot = core.GetComputerModule<MechJebModuleDockingAutopilot>();
             if (autopilot == null)
                 return false;
+            if (!aicore.CheckManeuverNodes())
+                throw new AbortFlightPlanException("Insufficient deltaV");
             if (!activated)
             {
+                if (FromDockingPort)
+                {
+                    if (!GetTargetDockingPort())
+                        throw new AbortFlightPlanException("Target does not have docking port");
+                    if (!SetDockControl())
+                        throw new AbortFlightPlanException("Vessel does not have docking port");
+                }
+                else if (FromGrabber)
+                {
+                    if (!SetGrabControl())
+                        throw new AbortFlightPlanException("Vessel does not have grabber");
+                }
                 activated = true;
                 if (Target == null)
                     Target = vessel.targetObject;
                 FlightGlobals.fetch.SetVesselTarget(Target);
+                autopilot.OnFixedUpdate();
+                autopilot.overridenTargetSize.val = Mathf.Clamp(autopilot.targetSize, 15, 50);
+                if (autopilot.overridenTargetSize.val > autopilot.targetSize)
+                    autopilot.overrideTargetSize = true;
+                autopilot.speedLimit = 10;
                 autopilot.users.Add(this);
             }
             core.node.autowarp = true;
-            autopilot.Drive(vessel.ctrlState);
+            //autopilot.Drive(vessel.ctrlState);
+            aicore.ManeuverStatus = autopilot.status;
             return !autopilot.users.Any();
         }
     }

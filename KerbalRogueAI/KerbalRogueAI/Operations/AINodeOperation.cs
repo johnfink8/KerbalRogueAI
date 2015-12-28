@@ -29,6 +29,8 @@ namespace KerbalRogueAI
         {
             if (!CheckNode(dV))
                 return false;
+            if (dV.magnitude > aicore.VesselDeltaV())
+                throw new AbortFlightPlanException("Node exceeds available deltaV");
             vessel.PlaceManeuverNode(orbit, dV, UT);
             core.node.ExecuteOneNode(this);
             return true;

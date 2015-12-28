@@ -1,0 +1,18 @@
+<FlightPlan>
+    <StartConditions>
+        <and>
+            <OrbitCircular>Kerbin</OrbitCircular>
+            <DeltaV>2300</DeltaV>
+            <BodyExists>Eve</BodyExists>
+        </and>
+    </StartConditions>
+    <Maneuvers>
+        <ChangeAP>605000</ChangeAP>
+        <Circularize>AP</Circularize>
+        <PlanetTransfer>Eve</PlanetTransfer>
+        <CourseCorrection target="Eve" distance="200"/>
+        <WarpTo>Transition</WarpTo>
+        <PeriapsisNow>95</PeriapsisNow>
+        <Circularize>PE</Circularize>
+    </Maneuvers>
+</FlightPlan>
