@@ -18,11 +18,6 @@ namespace KerbalRogueAI
             return false;  // This is a special case, we always need to call the operation code
         }
 
-        public string TimeTranslate(double dseconds)
-        {
-            uint seconds = (uint)dseconds;
-            return string.Format("{0:0} d, {1:00} h, {2:00}m, {3:00}s",seconds/86400,(seconds/3600)%24,(seconds/60)%60,seconds%60);
-        }
 
         public override bool _operation()
         {

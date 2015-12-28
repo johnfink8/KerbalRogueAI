@@ -39,6 +39,13 @@ namespace KerbalRogueAI
                     if (TimeWarp.CurrentRateIndex < 2)
                         core.warp.IncreasePhysicsWarp();
                 }
+                else if (burnTime > 10)
+                {
+                    if (TimeWarp.CurrentRateIndex < 1)
+                        core.warp.IncreasePhysicsWarp();
+                    if (TimeWarp.CurrentRateIndex > 1)
+                        core.warp.DecreasePhysicsWarp();
+                }
                 else if (TimeWarp.CurrentRateIndex > 0)
                 {
                     TimeWarp.SetRate(0, true);

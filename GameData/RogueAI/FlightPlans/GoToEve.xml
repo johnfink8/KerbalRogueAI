@@ -12,7 +12,7 @@
         <PlanetTransfer>Eve</PlanetTransfer>
         <CourseCorrection target="Eve" distance="200"/>
         <WarpTo>Transition</WarpTo>
-        <PeriapsisNow>95</PeriapsisNow>
+        <PeriapsisNow>95000</PeriapsisNow>
         <Circularize>PE</Circularize>
     </Maneuvers>
 </FlightPlan>
