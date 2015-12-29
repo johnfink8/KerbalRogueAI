@@ -1,0 +1,19 @@
+<FlightPlan>
+    <StartConditions>
+        <and>
+            <OrbitCircular>Kerbin</OrbitCircular>
+            <DeltaV>2300</DeltaV>
+            <BodyExists>Duna</BodyExists>
+            <TransferWindow>Duna</TransferWindow>
+            <RandomChance>50</RandomChance>
+        </and>
+    </StartConditions>
+    <Maneuvers>
+        <PlanetTransfer>Duna</PlanetTransfer>
+        <CourseCorrection target="Duna" distance="200"/>
+        <WarpTo>Transition</WarpTo>
+        <ChangePE>30000</ChangePE>
+        <ChangeAP>80000</ChangeAP>
+        <Circularize>AP</Circularize>
+    </Maneuvers>
+</FlightPlan>

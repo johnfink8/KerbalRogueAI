@@ -15,6 +15,11 @@ namespace KerbalRogueAI
         public override void GenerateNode()
         {
             double UT = Planetarium.GetUniversalTime();
+            orbit = vessel.orbit;
+            if (orbit.ApA > 0 && distance > orbit.ApA)
+                throw new AbortFlightPlanException("Can't make PE more than AP");
+            if (orbit.patchEndTransition == Orbit.PatchTransitionType.FINAL && aicore.OrbitCircular(orbit))
+                UT += orbit.timeToAp;
             var computedNode = new ManeuverParameters(OrbitalManeuverCalculator.DeltaVToChangePeriapsis(vessel.orbit, UT, distance + vessel.mainBody.Radius), UT);
             orbit = vessel.orbit;
             dV = computedNode.dV;

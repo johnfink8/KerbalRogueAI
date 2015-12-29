@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace KerbalRogueAI
 {
@@ -10,13 +11,16 @@ namespace KerbalRogueAI
     {
         public ConditionRandom(AICore aicore) : base(aicore) { }
 
-        public double Chance = 0;
+        public int Chance = 0;
 
         public override bool _condition()
         {
-            if (!aicore.RandomTimeout())
+            // Skip checks during time warp
+            if (TimeWarp.CurrentRateIndex > 0 && TimeWarp.WarpMode == TimeWarp.Modes.HIGH)
                 return false;
-            return aicore.random.NextDouble() < Chance;
+            // This should effectively mean that we have Chance percent chance per minute of passing
+            int roll = aicore.random.Next((int)(100 * 60 / Time.fixedDeltaTime));
+            return roll <= Chance;
         }
     }
 }

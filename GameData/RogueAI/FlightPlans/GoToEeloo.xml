@@ -2,17 +2,17 @@
     <StartConditions>
         <and>
             <OrbitCircular>Kerbin</OrbitCircular>
-            <DeltaV>2300</DeltaV>
-            <BodyExists>Eve</BodyExists>
-            <TransferWindow>Eve</TransferWindow>
+            <DeltaV>3500</DeltaV>
+            <BodyExists>Eeloo</BodyExists>
+            <TransferWindow>Eeloo</TransferWindow>
             <RandomChance>50</RandomChance>
         </and>
     </StartConditions>
     <Maneuvers>
-        <PlanetTransfer>Eve</PlanetTransfer>
-        <CourseCorrection target="Eve" distance="200"/>
+        <PlanetTransfer>Eeloo</PlanetTransfer>
+        <CourseCorrection target="Eeloo" distance="200"/>
         <WarpTo>Transition</WarpTo>
-        <ChangePE>95000</ChangePE>
+        <ChangePE>100000</ChangePE>
         <Circularize>PE</Circularize>
     </Maneuvers>
 </FlightPlan>

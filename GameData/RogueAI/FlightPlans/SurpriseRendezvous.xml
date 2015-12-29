@@ -4,12 +4,11 @@
             <OrbitCircular/>
             <EngineType>liquidfuel</EngineType>
             <DeltaV>500</DeltaV>
-            <ModuleType>ModuleGrappleNode</ModuleType>
             <VesselTarget />
+            <RandomChance>4</RandomChance>
         </and>
     </StartConditions>
     <Maneuvers>
-        <Rendezvous>50</Rendezvous>
-        <Dock FromGrabber="true"/>
+        <Rendezvous>10</Rendezvous>
     </Maneuvers>
 </FlightPlan>

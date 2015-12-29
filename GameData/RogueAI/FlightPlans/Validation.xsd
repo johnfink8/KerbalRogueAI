@@ -10,8 +10,10 @@
             <xsd:element name="OrbitCircular" />
             <xsd:element name="MassGreater" />
             <xsd:element name="MassLess" />
+            <xsd:element name="RandomChance" />
             <xsd:element name="ModuleType" />
             <xsd:element name="VesselTarget" />
+            <xsd:element name="TransferWindow" />
             <xsd:element name="or" type="RecurseCondition"/>
             <xsd:element name="and" type="RecurseCondition"/>
         </xsd:choice>
@@ -33,7 +35,7 @@
                         </xsd:complexType>
                     </xsd:element>
                     <xsd:element name="WarpTo" />
-                    <xsd:element name="PeriapsisNow" />
+                    <xsd:element name="ChangePE" />
                     <xsd:element name="ChangeAP" />
                     <xsd:element name="Circularize" />
                     <xsd:element name="Rendezvous" />

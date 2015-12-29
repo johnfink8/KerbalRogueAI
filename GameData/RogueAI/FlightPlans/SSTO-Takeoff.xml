@@ -5,6 +5,7 @@
             <EngineType>turbine</EngineType>
             <DeltaV>7000</DeltaV>
             <ModuleType>ModuleLiftingSurface</ModuleType>
+            <RandomChance>50</RandomChance>
         </and>
     </StartConditions>
     <Maneuvers>

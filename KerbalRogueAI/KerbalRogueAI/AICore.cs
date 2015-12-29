@@ -59,33 +59,61 @@ namespace KerbalRogueAI
         private ApplicationLauncherButton button = null;
 
         List<AIOperation> FlightPlan = null;
-        [Persistent(pass=1)]
+
+        [Persistent]
         public int FlightPlanStep = 0;
-        [Persistent(pass=1)]
+        [Persistent]
         public string FlightPlanFilename = null;
-        private double RandomTimer = 0;
-        private double RandomDuration = 60;
+        [Persistent]
+        public bool AIActive = false;
+        [Persistent]
         public bool GlobalEnabled = false;
+
+
         protected Rect windowPos;
         Texture2D logo = null;
         public string OutputMessage = "AI Initiated";
         public string ManeuverStatus = "";
+        List<TransferWindow> TransferWindows = null;
+        private CelestialBody ReferenceBody = null;
 
-
-        //Part PartPlugin = new Part();
-
-        public bool RandomTimeout()
+        private void StartTransferCalculations()
         {
-            if (TimeWarp.CurrentRateIndex > 0 && TimeWarp.WarpMode == TimeWarp.Modes.HIGH)
-                // Don't apply random chance during time warps.  That's no fun.
-                return false;
-            double UT = Planetarium.GetUniversalTime();
-            if (UT > RandomTimer)
+            if (TransferWindows == null)
+                TransferWindows = new List<TransferWindow>();
+            else
+                TransferWindows.Clear();
+            CelestialBody sun = FlightGlobals.Bodies[0];
+            foreach (CelestialBody body in FlightGlobals.Bodies)
             {
-                RandomTimer = UT + RandomDuration;
-                return true;
+                if (body != sun && body.referenceBody == sun)
+                {
+                    TransferWindows.Add(new TransferWindow(vessel.orbit, body.orbit));
+                }
             }
-            return false;
+        }
+
+        private void CheckTransfers()
+        {
+            if (TransferWindows == null)
+                return;
+            foreach (TransferWindow window in TransferWindows)
+                window.Check();
+        }
+
+        public double GetTransferWindow(Orbit destination)
+        {
+            foreach (TransferWindow window in TransferWindows)
+            {
+                if (window.Check() && window.destination == destination)
+                    return window.UT;
+            }
+            return -1;
+        }
+
+        string ConfigFilename()
+        {
+            return IOUtils.GetFilePathFor(this.GetType(), "rogueai_settings_vessel_" + vessel.id + ".cfg");   
         }
 
         private void CreateButtonIcon()
@@ -117,6 +145,30 @@ namespace KerbalRogueAI
 
         void Start()  //Called when vessel is placed on the launchpad
         {
+            ConfigNode coresave;
+            if (VesselExtensions.GetModules<MuMech.MechJebCore>(vessel).Count() < 1)
+            {
+                GlobalEnabled = false;
+                return;
+            }
+            else
+                GlobalEnabled = true;
+            if (File.Exists<AICore>(ConfigFilename()))
+            {
+                Debug.Log("RogueAI Loading from " + ConfigFilename());
+                try
+                {
+                    coresave = ConfigNode.Load(ConfigFilename());
+                    if (coresave != null)
+                        ConfigNode.LoadObjectFromConfig(this, coresave);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError("RogueAI Load error " + ex.GetType());
+                }
+            }
+            else
+                coresave = new ConfigNode("RogueAISettings");
             CreateButtonIcon();
             if ((windowPos.x == 0) && (windowPos.y == 0))//windowPos is used to position the GUI window, lets set it in the center of the screen
             {
@@ -144,7 +196,9 @@ namespace KerbalRogueAI
 
         public bool OrbitCircular(Orbit orbit)
         {
-            return orbit.PeA > orbit.referenceBody.atmosphereDepth && (orbit.ApA - orbit.PeA) / orbit.PeA < 0.2;
+            if (orbit.patchEndTransition != Orbit.PatchTransitionType.FINAL)
+                return false;
+            return orbit.PeA > orbit.referenceBody.atmosphereDepth && Math.Abs(orbit.ApR - orbit.PeR) / orbit.PeR < 0.2;
         }
         private float FlightHeadingElevation = 0f;
         private float FlightHeadingHeading = 0f;
@@ -311,7 +365,7 @@ namespace KerbalRogueAI
                 return;
             if (FlightPlan == null)
             {
-                GlobalEnabled = false;
+                AIActive = false;
                 if (FlightPlanFilename == null)
                     FlightPlan = GetFlightPlan();
                 else
@@ -319,7 +373,7 @@ namespace KerbalRogueAI
             }
             else
             {
-                GlobalEnabled = true;
+                AIActive = true;
                 try
                 {
                     if (FlightPlan[FlightPlanStep].Execute())
@@ -348,32 +402,20 @@ namespace KerbalRogueAI
             }
 
         }
-        /*
-         * Called after the scene is loaded.
-         */
-        void Awake()
-        {
-        }
-        /*
- * Called every frame
- */
-        void disabledUpdate()
-        {
-            //CheckVessel();
-            if ((Time.time - lastUpdate) > logInterval)
-            {
-                lastUpdate = Time.time;
-            }
-        }
 
         /*
          * Called at a fixed time interval determined by the physics time step.
          */
-        private float lastUpdate = 0.0f;
-        private float lastFixedUpdate = 0.0f;
-        private float logInterval = 5.0f;
         void FixedUpdate()
         {
+            if (!GlobalEnabled)
+                return;
+            if (vessel.mainBody != ReferenceBody && OrbitCircular(vessel.orbit))
+            {
+                ReferenceBody = vessel.mainBody;
+                StartTransferCalculations();
+            }
+            CheckTransfers();
             try
             {
                 flyByWire(vessel.ctrlState);
@@ -386,10 +428,6 @@ namespace KerbalRogueAI
                 Debug.LogError("StackTrace ---"+ ex.StackTrace);
                 Debug.LogError("TargetSite ---"+ ex.TargetSite);
             }
-            if ((Time.time - lastFixedUpdate) > logInterval)
-            {
-                lastFixedUpdate = Time.time;
-            }
         }
 
         /*
@@ -398,7 +436,12 @@ namespace KerbalRogueAI
         void OnDestroy()
         {
             ApplicationLauncher.Instance.RemoveModApplication(button);
+            ConfigNode coresave = ConfigNode.CreateConfigFromObject(this);
+            coresave.Save(ConfigFilename());
+            Debug.Log("RogueAI saved to " + ConfigFilename());
         }
+
+        
 
 
         private void WindowGUI(int windowID)
@@ -429,11 +472,21 @@ namespace KerbalRogueAI
         }
         private void drawGUI()
         {
-            if (GlobalEnabled)
+            if (AIActive)
             {
                 GUI.skin = HighLogic.Skin;
                 windowPos = GUILayout.Window(1, windowPos, WindowGUI, "", GUILayout.MinWidth(600));
             }
+        }
+
+        void OnSave(ConfigNode pers)
+        {
+            Debug.Log("RogueAI OnSave");
+        }
+
+        void OnLoad(ConfigNode pers)
+        {
+            Debug.Log("RogueAI OnLoad");
         }
     }
 }

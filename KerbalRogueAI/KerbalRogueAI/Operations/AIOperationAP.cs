@@ -18,7 +18,7 @@ namespace KerbalRogueAI
             orbit = vessel.orbit;
             if (distance < orbit.PeA)
                 throw new AbortFlightPlanException("Can't make AP less than PE");
-            if (!aicore.OrbitCircular(orbit) && orbit.PeA>orbit.referenceBody.atmosphereDepth)
+            if (!aicore.OrbitCircular(orbit))
                 UT += orbit.timeToPe;
             var computedNode = new ManeuverParameters(OrbitalManeuverCalculator.DeltaVToChangeApoapsis(orbit, UT, distance + vessel.mainBody.Radius), UT);
             dV = computedNode.dV;

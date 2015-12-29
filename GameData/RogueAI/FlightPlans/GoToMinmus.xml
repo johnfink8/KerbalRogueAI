@@ -1,0 +1,17 @@
+<FlightPlan>
+    <StartConditions>
+        <and>
+            <OrbitCircular>Kerbin</OrbitCircular>
+            <DeltaV>1200</DeltaV>
+            <BodyExists>Minmus</BodyExists>
+            <RandomChance>15</RandomChance>
+        </and>
+    </StartConditions>
+    <Maneuvers>
+        <HohmannTransfer>Minmus</HohmannTransfer>
+        <CourseCorrection target="Minmus" distance="50"/>
+        <WarpTo>Transition</WarpTo>
+        <ChangePE>16000</ChangePE>
+        <Circularize>PE</Circularize>
+    </Maneuvers>
+</FlightPlan>

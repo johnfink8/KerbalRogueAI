@@ -3,11 +3,12 @@
         <EngineType>liquidfuel</EngineType>
         <DeltaV>1000</DeltaV>
         <Encounter>Minmus</Encounter>
+        <RandomChance>4</RandomChance>
     </StartConditions>
     <Maneuvers>
-        <CourseCorrection target="Minmus" distance="15"/>
+        <CourseCorrection target="Minmus" distance="15000"/>
         <WarpTo>Transition</WarpTo>
-        <PeriapsisNow>16</PeriapsisNow>
+        <ChangePE>16000</ChangePE>
         <Circularize>PE</Circularize>
     </Maneuvers>
 </FlightPlan>

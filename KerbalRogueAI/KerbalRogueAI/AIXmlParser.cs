@@ -96,14 +96,31 @@ namespace KerbalRogueAI
                         conditionmasslt.MassLT = float.Parse(xmlcondition.InnerText);
                     return conditionmasslt;
 
+                case "randomchance":
+                    var conditionrandom = new ConditionRandom(aicore);
+                    if (xmlcondition.InnerText != "")
+                        conditionrandom.Chance = int.Parse(xmlcondition.InnerText);
+                    return conditionrandom;
+
                 case "moduletype":
                     var conditionmoduletype = new ConditionModuleType(aicore);
                     if (xmlcondition.InnerText != "")
                         conditionmoduletype.ModuleType = xmlcondition.InnerText;
                     return conditionmoduletype;
+
                 case "vesseltarget":
                     var conditionvesseltarget = new ConditionVesselTarget(aicore);
                     return conditionvesseltarget;
+
+                case "transferwindow":
+                    var conditionwindow = new ConditionTransferWindow(aicore);
+                    if (xmlcondition.InnerText != "")
+                    {
+                        CelestialBody body = aicore.GetBody(xmlcondition.InnerText);
+                        conditionwindow.destination = body.orbit;
+                    }
+                    return conditionwindow;
+
                 case "or":
                     var conditionor = new ConditionOr(aicore);
                     foreach (XmlNode child in xmlcondition.ChildNodes)
@@ -157,7 +174,7 @@ namespace KerbalRogueAI
                         opwarp.strTo = xmlmaneuver.InnerText;
                     return opwarp;
 
-                case "periapsisnow":
+                case "changepe":
                     var oppe = new AIOperationPE(aicore);
                     if (xmlmaneuver.InnerText != "")
                         oppe.distance = Double.Parse(xmlmaneuver.InnerText);
