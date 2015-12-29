@@ -9,5 +9,5 @@ you'll be able to get back again.
 
 # Requirements
 
-MechJeb
-Courage
+* MechJeb
+* Courage
