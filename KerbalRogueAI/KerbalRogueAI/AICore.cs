@@ -341,6 +341,9 @@ namespace KerbalRogueAI
                     FlightPlanStep = 0;
                     FlightPlan = null;
                     FlightPlanFilename = null;
+                    // We need to clear out the controller users so that MechJeb doesn't carry on with whatever
+                    core.attitude.users.Clear();
+                    core.node.users.Clear();
                 }
             }
 
